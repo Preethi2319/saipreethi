@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Pull from GitHub') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Preethi2319/saipreethi.git'
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                sh 'docker build -t online-restaurant .'
+            }
+        }
+
+        stage('Run Docker container') {
+            steps {
+                sh '''
+                    docker rm -f online-container || true
+                    docker run -d --name online-container -p 8080:8080 online-restaurant
+                '''
+            }
+        }
+
+        stage('Deployment Complete') {
+            steps {
+                echo 'Application deployed successfully 🚀'
+            }
+        }
+    }
+}
